@@ -7,31 +7,23 @@ open Suave.Successful
 open Suave.Web
 open Suave.RequestErrors
 
-let browse =
-    request (fun r ->
-        match r.queryParam "genre" with
-        | Choice1Of2 genre -> OK (sprintf "Genre: %s" genre)
-        | Choice2Of2 msg -> BAD_REQUEST msg)
-
-let details =
+let LoginPost =
     choose [
-        GET >=> warbler (fun _ -> OK "GET")
-
-        POST >=> warbler (fun _ -> OK "POST")
+        POST >=> warbler (fun ctx -> OK "On crée la session du mec")
     ]
 
+let GetGame =
+    request (fun r ->
+        match r.queryParam "cell" with
+        | Choice1Of2 genre -> OK "Le mec a cliqué sur une cell - > renvoi d'une game"
+        | Choice2Of2 msg -> OK "Le mec poll - > renvoi d'une game"
+    )
 
 
 let routes = 
     choose [
-        path "/" >=> (OK "Home")
-        path "/store" >=> (OK "Store")
-        path "/store/browse" >=> browse
-        path "/store/details" >=> details
-        pathScan "/store/details/%d" 
-            (fun id -> OK (sprintf "Details: %d" id))
-        pathScan "/store/details/%s/%d" 
-            (fun (a, id) -> OK (sprintf "Artist: %s; Id: %d" a id))
+        path "/Login" >=> LoginPost
+        path "/Game" >=> GetGame     
     ]
 
 startWebServer defaultConfig routes

@@ -14,13 +14,14 @@
     }
     type Player = {
         Name : string
-        Ships : Ship[]
-        Shots : Position[]
+        Ships : List<Ship>
+        Shots : List<Position>
     }
-    type Game( active : Player, passive : Player, message : string, isFinished : bool, winnerName : string) = 
-       member this.Active = active
-       member this.Passive = passive
-       member this.Message  = message
-       member this.IsFinished = isFinished
-       member this.WinnerName =winnerName
+    type Game = {
+       Active : Player
+       Passive : Player
+       Message  : string
+       IsFinished : bool
+       WinnerName : string
+    }
     

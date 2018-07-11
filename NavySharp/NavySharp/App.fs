@@ -1,5 +1,6 @@
 ﻿module App
 
+open System.Linq
 open Suave
 open Suave.Filters
 open Suave.Operators
@@ -22,9 +23,13 @@ let HandleLogin (ctx : HttpRequest) : WebPart =
 let HandleGamePolling : WebPart = 
     OK "Le mec poll - > renvoi d'une game"
 
-let HandleCellSelection (cellIdx : string) : WebPart = 
-//update game bard with new shot
-   HandleGamePolling
+let HandleCellSelection (cellIdx : string) ( req : HttpRequest)  : WebPart = 
+    //update game bard with new shot
+    let idx = LanguagePrimitives.ParseInt32(cellIdx)
+    let shot = Position(idx%10,idx/10)
+    let game = games.Where(fun g -> g.Active.Name="").Single()
+    game.Active.Shots =  shot :: game.Active.Shots
+    HandleGamePolling
 
 
 let LoginPost = POST >=> request HandleLogin
@@ -33,7 +38,7 @@ let LoginPost = POST >=> request HandleLogin
 let GetGame =
     request (fun r ->
         match r.queryParam "cell" with
-        | Choice1Of2 cell -> HandleCellSelection cell
+        | Choice1Of2 cellIdx -> (HandleCellSelection cellIdx r)
         | Choice2Of2 _ -> HandleGamePolling
     )
 

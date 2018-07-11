@@ -1,5 +1,4 @@
 ﻿module Models
-    open Newtonsoft.Json
 
     type Position = { 
         X : int
@@ -21,8 +20,3 @@
         IsFinished : bool
         WinnerName : string
     }
-    let ToJson (game : Game) : string = 
-        JsonConvert.SerializeObject game
-
-    let FromJson (game : string) : Game = 
-        JsonConvert.DeserializeObject<Game> game

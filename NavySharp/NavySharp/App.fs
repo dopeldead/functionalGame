@@ -7,8 +7,10 @@ open Suave.Successful
 open Suave.Web
 open Suave.RequestErrors
 
-let HandleLogin (ctx : HttpContext) : WebPart = 
-     OK "On crée la session du mec" 
+
+let HandleLogin (ctx : HttpRequest) : WebPart =  
+     ctx.rawForm |> System.Text.Encoding.UTF8.GetString |> OK
+
 
 let HandleGamePolling : WebPart = 
     OK "Le mec poll - > renvoi d'une game"
@@ -18,9 +20,7 @@ let HandleCellSelection (cellIdx : string) : WebPart =
    HandleGamePolling
 
 
-
-let LoginPost =
-    POST >=> warbler (fun ctx -> HandleLogin ctx)
+let LoginPost = POST >=> request HandleLogin
     
 
 let GetGame =

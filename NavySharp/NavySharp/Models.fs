@@ -11,7 +11,8 @@
     }
     type Player = {
         Name : string
-        Grid : string
+        Ships : Ship[]
+        Shots : Position[]
     }
     type Game = {
         Active : Player

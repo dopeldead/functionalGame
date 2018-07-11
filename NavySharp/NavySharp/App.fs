@@ -8,7 +8,7 @@ open Suave.Web
 open Suave.RequestErrors
 
 let HandleLogin (ctx : HttpContext) : WebPart = 
-        OK "On crée la session du mec" 
+     OK "On crée la session du mec" 
 
 let HandleCellSelection (cellIdx : string) : WebPart = 
     OK "Le mec a cliqué sur une cell - > renvoi d'une game"
@@ -18,9 +18,8 @@ let HandleGamePolling : WebPart =
 
 
 let LoginPost =
-    choose [
-        POST >=> warbler (fun ctx -> HandleLogin ctx)
-    ]
+    POST >=> warbler (fun ctx -> HandleLogin ctx)
+    
 
 let GetGame =
     request (fun r ->

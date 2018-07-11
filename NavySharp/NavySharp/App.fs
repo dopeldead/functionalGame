@@ -7,16 +7,26 @@ open Suave.Successful
 open Suave.Web
 open Suave.RequestErrors
 
+let HandleLogin (ctx : HttpContext) : WebPart = 
+        OK "On crée la session du mec" 
+
+let HandleCellSelection (cellIdx : string) : WebPart = 
+    OK "Le mec a cliqué sur une cell - > renvoi d'une game"
+
+let HandleGamePolling : WebPart = 
+    OK "Le mec poll - > renvoi d'une game"
+
+
 let LoginPost =
     choose [
-        POST >=> warbler (fun ctx -> OK "On crée la session du mec")
+        POST >=> warbler (fun ctx -> HandleLogin ctx)
     ]
 
 let GetGame =
     request (fun r ->
         match r.queryParam "cell" with
-        | Choice1Of2 genre -> OK "Le mec a cliqué sur une cell - > renvoi d'une game"
-        | Choice2Of2 msg -> OK "Le mec poll - > renvoi d'une game"
+        | Choice1Of2 cell -> HandleCellSelection cell
+        | Choice2Of2 _ -> HandleGamePolling
     )
 
 

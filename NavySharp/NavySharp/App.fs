@@ -10,11 +10,13 @@ open Suave.RequestErrors
 let HandleLogin (ctx : HttpContext) : WebPart = 
      OK "On crée la session du mec" 
 
-let HandleCellSelection (cellIdx : string) : WebPart = 
-    OK "Le mec a cliqué sur une cell - > renvoi d'une game"
-
 let HandleGamePolling : WebPart = 
     OK "Le mec poll - > renvoi d'une game"
+
+let HandleCellSelection (cellIdx : string) : WebPart = 
+//update game bard with new shot
+   HandleGamePolling
+
 
 
 let LoginPost =

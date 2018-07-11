@@ -14,6 +14,13 @@ Some of these were decided so as to focus on actual game logic
 * Players ships are put on the grid automatically in a random way
 * No timer to end a turn
 
+### API
+/login POST body: username -> OK
+/getGame GET -> object game 
+/getPassive body:  GET -> object game
+/endTurn body: cell A5 -> object game
+
+
 
 
 

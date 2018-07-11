@@ -5,7 +5,11 @@ open Suave.Filters
 open Suave.Operators
 open Suave.Successful
 open Suave.Web
-open Suave.RequestErrors
+open Models
+
+let mutable games : List<Game> = []
+let mutable players : List<Player> = []
+let mutable lobbyPlayers : List<Player> = []
 
 let HandleLogin (ctx : HttpContext) : WebPart = 
      OK "On crée la session du mec" 

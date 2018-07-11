@@ -7,17 +7,18 @@ open Suave.Operators
 open Suave.Successful
 open Suave.Web
 open Models
-open System.Collections.Generic
+
 
 let mutable games : List<Game> = []
 let mutable players : List<Player> = []
 let mutable lobbyPlayers : List<Player> = []
 
 
-let HandleLogin (ctx : HttpRequest) : WebPart =  
+let HandleLogin ctx =  
      let name = ctx.rawForm |> System.Text.Encoding.UTF8.GetString
-     players.Add Player name
-     OK
+     players <- players @ [{Name=name; Ships=[]; Shots=[]}]
+     
+     OK ""
 
 
 let HandleGamePolling : WebPart = 

@@ -16,11 +16,12 @@ let HandleLogin ctx =
      let name = ctx.rawForm |> System.Text.Encoding.UTF8.GetString
      let player = {Name=name; Ships=[]; Shots=[]}
 
-     if String.IsNullOrEmpty(name) then 
-         BAD_REQUEST "Empty username"
-     elif List.contains player players
-     then
-         CONFLICT "Username already exists"
+     if String.IsNullOrEmpty(name)
+        then 
+        BAD_REQUEST "Empty username"
+     elif (List.exists(fun p -> p.Name=name) players)
+        then
+        CONFLICT "Username already exists"
      else
          players <- players @ [player]
          lobbyPlayers <- lobbyPlayers @ [player]

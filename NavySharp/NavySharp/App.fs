@@ -1,14 +1,13 @@
 ﻿module App
 
-open System.Linq
 open Suave
 open Suave.RequestErrors
 open Suave.Filters
 open Suave.Operators
 open Suave.Successful
 open Models
-open Suave
 open System
+
 
 
 
@@ -45,7 +44,7 @@ let HandleCellSelection (cellIdx : string)(username : string) ( req : HttpReques
     //update game bard with new shot
     let idx = LanguagePrimitives.ParseInt32(cellIdx)
     let shot = Position(idx%10,idx/10)
-    let game = games.Where(fun g -> g.Active.Name=username).Single()
+    let game =  List.find(fun g -> g.Active.Name=username) games
     games <-  (GameShot game shot) :: List.where(fun g-> not(g.Active.Name=game.Active.Name)) games
     HandleGamePolling username
 

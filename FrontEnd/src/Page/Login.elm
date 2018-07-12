@@ -89,15 +89,11 @@ postRequest model =
         , withCredentials = False
         }
 
-
-
 -- VIEWS
-
 
 view : Model -> Html Msg
 view model =
     Utils.view model viewForm
-
 
 viewForm : Model -> Html Msg
 viewForm model =
@@ -120,10 +116,7 @@ viewForm model =
             [ text "Submit" ]
         ]
 
-
-
 -- MAIN
-
 
 main : Program Never Model Msg
 main =

@@ -22,7 +22,6 @@
        Active : Player
        Passive : Player
        Message  : string
-       IsFinished : bool
        WinnerName : string
     }
 
@@ -42,7 +41,7 @@
         if game.Active.Shots.Length < (List.sumBy(fun s -> s.Length)  game.Passive.Ships)
             then { game with Passive = PlayerShot game.Active coordinates;Active=passive ;  Message = "hit;"+coordinates.X.ToString()+";"+coordinates.Y.ToString()}
         elif IsWon game
-            then { game with Passive = PlayerShot game.Active coordinates;Active=passive ;  Message = game.Active.Name+"won"; IsFinished = true}
+            then { game with Passive = PlayerShot game.Active coordinates;Active=passive ;  Message = game.Active.Name+"won"; WinnerName = game.Active.Name}
         else { game with Passive = PlayerShot game.Active coordinates;Active=passive ;  Message = "hit;"+coordinates.X.ToString()+";"+coordinates.Y.ToString()}
 
     let GameShot game coordinates = 

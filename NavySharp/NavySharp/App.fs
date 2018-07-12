@@ -33,7 +33,7 @@ let CreateGame (username : string ) : Game =
     let shipSize = [5,4,3,3,2]
     let firstPlayer = List.find(fun p -> (p.Name = username)) lobbyPlayers
     let otherPlayer = List.find(fun p -> not (p.Name = username)) lobbyPlayers
-    let game = {Active= firstPlayer; Passive=otherPlayer; Message="";IsFinished=false;WinnerName=""}
+    let game = {Active= firstPlayer; Passive=otherPlayer; Message="";WinnerName=""}
     lobbyPlayers <- List.where(fun p -> not(p.Name=firstPlayer.Name || p.Name = otherPlayer.Name ) ) lobbyPlayers
     games <- games @ [game]
     game
@@ -45,10 +45,10 @@ let HandleGamePolling (username : string) : WebPart =
         then NOT_FOUND username
     elif (List.exists(fun g -> g.Active.Name=username || g.Passive.Name=username) games)
         then
-        if List.exists(fun g-> g.Active.Name=username && g.IsFinished) games
+        if List.exists(fun g-> g.Active.Name=username && not(String.isEmpty( g.WinnerName))) games
             then
-                let game = List.find(fun g-> g.Active.Name=username && g.IsFinished) games
-                games <- List.where(fun g-> not( g.Active.Name=username && g.IsFinished)) games
+                let game = List.find(fun g-> g.Active.Name=username && not(String.isEmpty( g.WinnerName))) games
+                games <- List.where(fun g-> not( g.Active.Name=username && not(String.isEmpty( g.WinnerName)))) games
                 OK  (Json.toJson(game)|> System.Text.Encoding.UTF8.GetString)
         else
              (OK  (Json.toJson(List.find(fun g -> g.Active.Name=username || g.Passive.Name=username) games)|> System.Text.Encoding.UTF8.GetString))

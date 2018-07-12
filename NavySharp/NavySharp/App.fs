@@ -28,8 +28,8 @@ let HandleLogin ctx =
      else
          players <- players @ [player]
          lobbyPlayers <- lobbyPlayers @ [player]
-         Console.WriteLine(name)
          Console.WriteLine(sprintf "%A" players)
+         Console.WriteLine(sprintf "%A" lobbyPlayers)
          OK ""
 
 

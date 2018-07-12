@@ -25,9 +25,20 @@ let HandleLogin ctx =
      else
          players <- players @ [player]
          lobbyPlayers <- lobbyPlayers @ [player]
-         Console.WriteLine(sprintf "%A" players)
-         Console.WriteLine(sprintf "%A" lobbyPlayers)
          OK ""
+
+// Creates game from 2 players
+let CreateGame (username : string ) : Game =
+    Console.WriteLine(username)
+    let shipSize = [5,4,3,3,2]
+    let firstPlayer = List.find(fun p -> (p.Name = username)) lobbyPlayers
+    let otherPlayer = List.find(fun p -> not (p.Name = username)) lobbyPlayers
+    let game = {Active= firstPlayer; Passive=otherPlayer; Message="";IsFinished=false;WinnerName=""}
+    lobbyPlayers <- List.where(fun p -> not(p.Name=firstPlayer.Name || p.Name = otherPlayer.Name ) ) lobbyPlayers
+    games <- games @ [game]
+    game
+        
+
 
 let HandleGamePolling (username : string) : WebPart = 
     if not (List.exists(fun p -> p.Name = username) players)
@@ -42,7 +53,8 @@ let HandleGamePolling (username : string) : WebPart =
         else
              (OK  (Json.toJson(List.find(fun g -> g.Active.Name=username || g.Passive.Name=username) games)|> System.Text.Encoding.UTF8.GetString))
     elif lobbyPlayers.Length >=2
-        then OK "gotta create game"
+    then 
+        OK (Json.toJson(CreateGame username) |> System.Text.Encoding.UTF8.GetString)
     else
         OK "waiting"
 

@@ -90,7 +90,7 @@ let HandleGamePolling (username : string) : WebPart =
 
 let HandleCellSelection (cellIdx : string)(username : string) ( req : HttpRequest)  : WebPart = 
     let idx = LanguagePrimitives.ParseInt32(cellIdx)
-    let shot = Position(idx%10,idx/10)
+    let shot = Position(idx/10,idx%10)
     if not (List.exists(fun g -> g.Active.Name=username) games)
         then FORBIDDEN "Not your turn"
     else

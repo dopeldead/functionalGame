@@ -25,7 +25,9 @@ let HandleCellSelection (cellIdx : string) ( req : HttpRequest)  : WebPart =
     let idx = LanguagePrimitives.ParseInt32(cellIdx)
     let shot = Position(idx%10,idx/10)
     let game = games.Where(fun g -> g.Active.Name="").Single()
-    game.Active.Shots =  shot :: game.Active.Shots
+
+    games <-  (GameShot game shot) :: List.where(fun g-> not(g.Active.Name=game.Active.Name)) games
+                    
     HandleGamePolling
 
 

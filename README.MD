@@ -16,4 +16,9 @@ Some of these were decided so as to focus on actual game logic
 
 ### API
 * /login POST body: username -> OK
-* /game GET optional param: cell int (0..99) -> object game 
+* /game GET optional param: cell int (0..99) -> object game (voir fichier JSON a la racine)
+
+la game a un champ message contenant le statut du dernier tir : "miss;4;6" 
+																"hit;4;6"
+Ou des informations sur un tire deja fait ans la case : "error;4;6"
+Ou des info sur le gagnant "won" et le WinnerName contient le nom du gagnant

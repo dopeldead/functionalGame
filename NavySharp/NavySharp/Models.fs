@@ -48,7 +48,7 @@
         let passive = game.Passive
         //check if shot valid, succed or miss
         if List.contains(coordinates) game.Active.Shots
-            then { game with  Message = "cannot shoot twice at the same place;"+coordinates.X.ToString()+";"+coordinates.Y.ToString()}
+            then { game with  Message = "error;"+coordinates.X.ToString()+";"+coordinates.Y.ToString()}
         else 
             let potentialHits = List.map(fun s -> s.StartCell.X <= coordinates.X && s.EndCell.X >= coordinates.X && s.StartCell.Y <= coordinates.Y && s.EndCell.Y >= coordinates.Y    ) game.Passive.Ships
             let isHit = List.exists(fun b -> b) potentialHits

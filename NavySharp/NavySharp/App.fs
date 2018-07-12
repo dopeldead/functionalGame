@@ -33,11 +33,12 @@ let HandleGamePolling (username : string) : WebPart =
         then NOT_FOUND username
     elif (List.exists(fun g -> g.Active.Name=username || g.Passive.Name=username) games)
         then (OK  (Json.toJson(List.find(fun g -> g.Active.Name=username || g.Passive.Name=username) games)|> System.Text.Encoding.UTF8.GetString))
+    elif lobbyPlayers.Length >=2
+        then OK "gotta create game"
     else
-        OK "temp"
+        OK "waiting"
 
 let HandleCellSelection (cellIdx : string)(username : string) ( req : HttpRequest)  : WebPart = 
-    //update game bard with new shot
     let idx = LanguagePrimitives.ParseInt32(cellIdx)
     let shot = Position(idx%10,idx/10)
     let game =  List.find(fun g -> g.Active.Name=username) games

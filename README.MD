@@ -16,7 +16,9 @@ Some of these were decided so as to focus on actual game logic
 
 ### API
 * /login POST body: username -> OK
-* /game GET optional param: cell int (0..99) -> object game (voir fichier JSON a la racine)
+* /game GET PARAMS:
+			MANDATORY username -> the players name returns return an BADREQUEST if empty or NOTFOUND if the player doesn't exist orterwise the current game object (view JSON file )
+			optional param: cell int (0..99) -> object game  (view JSON file )
 
 la game a un champ message contenant le statut du dernier tir : "miss;4;6" 
 																"hit;4;6"

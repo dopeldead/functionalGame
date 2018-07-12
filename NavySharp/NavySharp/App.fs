@@ -2,11 +2,13 @@
 
 open System.Linq
 open Suave
+open Suave.RequestErrors
 open Suave.Filters
 open Suave.Operators
 open Suave.Successful
-open Suave.Web
 open Models
+open System
+
 
 
 let mutable games : List<Game> = []
@@ -16,9 +18,19 @@ let mutable lobbyPlayers : List<Player> = []
 
 let HandleLogin ctx =  
      let name = ctx.rawForm |> System.Text.Encoding.UTF8.GetString
-     players <- players @ [{Name=name; Ships=[]; Shots=[]}]
-     
-     OK ""
+     let player = {Name=name; Ships=[]; Shots=[]}
+
+     if String.IsNullOrEmpty(name) then 
+         BAD_REQUEST "Empty username"
+     elif List.contains player players
+     then
+         CONFLICT "Username already exists"
+     else
+         players <- players @ [player]
+         lobbyPlayers <- lobbyPlayers @ [player]
+         Console.WriteLine(name)
+         Console.WriteLine(sprintf "%A" players)
+         OK ""
 
 
 let HandleGamePolling : WebPart = 

@@ -1,4 +1,4 @@
-﻿module App
+module App
 
 open Suave
 open Suave.RequestErrors
@@ -67,5 +67,6 @@ let routes =
         path "/Login" >=> LoginPost
         path "/Game" >=> GetGame     
     ]
+
 
 startWebServer defaultConfig routes

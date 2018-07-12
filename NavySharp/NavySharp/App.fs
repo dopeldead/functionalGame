@@ -33,7 +33,14 @@ let HandleGamePolling (username : string) : WebPart =
     if not (List.exists(fun p -> p.Name = username) players)
         then NOT_FOUND username
     elif (List.exists(fun g -> g.Active.Name=username || g.Passive.Name=username) games)
-        then (OK  (Json.toJson(List.find(fun g -> g.Active.Name=username || g.Passive.Name=username) games)|> System.Text.Encoding.UTF8.GetString))
+        then
+        if List.exists(fun g-> g.Active.Name=username && g.IsFinished) games
+            then
+                let game = List.find(fun g-> g.Active.Name=username && g.IsFinished) games
+                games <- List.where(fun g-> not( g.Active.Name=username && g.IsFinished)) games
+                OK  (Json.toJson(game)|> System.Text.Encoding.UTF8.GetString)
+        else
+             (OK  (Json.toJson(List.find(fun g -> g.Active.Name=username || g.Passive.Name=username) games)|> System.Text.Encoding.UTF8.GetString))
     elif lobbyPlayers.Length >=2
         then OK "gotta create game"
     else

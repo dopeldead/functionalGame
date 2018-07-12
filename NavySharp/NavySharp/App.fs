@@ -8,6 +8,7 @@ open Suave.Operators
 open Suave.Successful
 open Suave.Web
 open Models
+open Suave
 
 
 let mutable games : List<Game> = []
@@ -19,11 +20,15 @@ let HandleLogin ctx =
      let name = ctx.rawForm |> System.Text.Encoding.UTF8.GetString
      players <- players @ [{Name=name; Ships=[]; Shots=[]}]
      
-     OK ""
-
+     OK ""   
 
 let HandleGamePolling (username : string) : WebPart = 
-    OK "Le mec poll - > renvoi d'une game"
+    if not (List.exists(fun p -> p.Name = username) players)
+        then NOT_FOUND username
+    else if (List.exists(fun g -> g.Active.Name=username || g.Passive.Name=username) games)
+        then (OK  (Json.toJson(List.find(fun g -> g.Active.Name=username || g.Passive.Name=username) games)|> System.Text.Encoding.UTF8.GetString))
+    else
+        OK "temp"
 
 let HandleCellSelection (cellIdx : string)(username : string) ( req : HttpRequest)  : WebPart = 
     //update game bard with new shot

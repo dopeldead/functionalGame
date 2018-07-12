@@ -8,13 +8,9 @@ open Suave.Successful
 open Models
 open System
 
-
-
-
 let mutable games : List<Game> = []
 let mutable players : List<Player> = []
 let mutable lobbyPlayers : List<Player> = []
-
 
 let HandleLogin ctx =  
      let name = ctx.rawForm |> System.Text.Encoding.UTF8.GetString
@@ -48,10 +44,8 @@ let HandleCellSelection (cellIdx : string)(username : string) ( req : HttpReques
     games <-  (GameShot game shot) :: List.where(fun g-> not(g.Active.Name=game.Active.Name)) games
     HandleGamePolling username
 
-
 let LoginPost = POST >=> request HandleLogin
     
-
 let GetGame =
     request (fun r ->
         let cellidx =  match r.queryParam "cell" with
@@ -66,7 +60,6 @@ let GetGame =
             then HandleGamePolling username
         else (HandleCellSelection cellidx username r)
     )
-
 
 let routes = 
     choose [

@@ -14,7 +14,7 @@ let mutable lobbyPlayers : List<Player> = []
 
 let HandleLogin (request : HttpRequest) : WebPart =  
      let name = request.rawForm |> System.Text.Encoding.UTF8.GetString
-     let player = {Name=name; Ships=[]; Shots=[]}
+     let player = {Name=name.Replace("=", ""); Ships=[]; Shots=[]}
 
      if String.IsNullOrEmpty(name)
         then 

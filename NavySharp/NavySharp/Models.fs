@@ -37,6 +37,7 @@
         else 
             let potentialHits = List.map(fun s -> s.StartCell.X <= coordinates.X && s.EndCell.X >= coordinates.X && s.StartCell.Y <= coordinates.Y && s.EndCell.Y >= coordinates.Y    ) game.Passive.Ships
             let isHit = List.exists(fun b -> b) potentialHits
-            match isHit with 
+            match isHit with
+                //ifhit have to check if game is won
                 | true -> { game with Passive = PlayerShot game.Active coordinates;Active=passive ;  Message = "hit;"+coordinates.X.ToString()+";"+coordinates.Y.ToString()}
                 | false -> { game with Passive = PlayerShot game.Active coordinates;Active = passive ;  Message = "miss;"+coordinates.X.ToString()+";"+coordinates.Y.ToString()}

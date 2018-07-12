@@ -25,7 +25,7 @@
        WinnerName : string
     }
 
-    let PlayerShot player coordinates = 
+    let PlayerShot (player : Player) (coordinates : Position) : Player = 
         { player with Shots = coordinates :: player.Shots}
     
     let IsWon(game:Game) : bool =
@@ -44,7 +44,7 @@
             then { game with Passive = PlayerShot game.Active coordinates;Active=passive ;  Message = game.Active.Name+"won"; WinnerName = game.Active.Name}
         else { game with Passive = PlayerShot game.Active coordinates;Active=passive ;  Message = "hit;"+coordinates.X.ToString()+";"+coordinates.Y.ToString()}
 
-    let GameShot game coordinates = 
+    let GameShot (game : Game) (coordinates:Position) : Game = 
         let passive = game.Passive
         //check if shot valid, succed or miss
         if List.contains(coordinates) game.Active.Shots

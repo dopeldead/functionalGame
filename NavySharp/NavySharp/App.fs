@@ -12,8 +12,8 @@ let mutable games : List<Game> = []
 let mutable players : List<Player> = []
 let mutable lobbyPlayers : List<Player> = []
 
-let HandleLogin ctx =  
-     let name = ctx.rawForm |> System.Text.Encoding.UTF8.GetString
+let HandleLogin (request : HttpRequest) : WebPart =  
+     let name = request.rawForm |> System.Text.Encoding.UTF8.GetString
      let player = {Name=name; Ships=[]; Shots=[]}
 
      if String.IsNullOrEmpty(name)
@@ -60,9 +60,7 @@ let CreateGame (username : string ) : Game =
     let otherPlayer = List.find(fun p -> not (p.Name = username)) lobbyPlayers
     let boatList = [5;4;3;3;2]
 
-    let temp = PlaceShips firstPlayer boatList
-
-    let game = {Active= firstPlayer; Passive=otherPlayer; Message="";WinnerName=""}
+    let game = {Active= (PlaceShips firstPlayer boatList); Passive=(PlaceShips otherPlayer boatList); Message="";WinnerName=""}
     lobbyPlayers <- List.where(fun p -> not(p.Name=firstPlayer.Name || p.Name = otherPlayer.Name ) ) lobbyPlayers
     games <- games @ [game]
     game

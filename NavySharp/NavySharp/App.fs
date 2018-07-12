@@ -8,6 +8,8 @@ open Suave.Successful
 open Models
 open System
 
+open Newtonsoft.Json
+
 let mutable games : List<Game> = []
 let mutable players : List<Player> = []
 let mutable lobbyPlayers : List<Player> = []
@@ -37,8 +39,8 @@ let rec PlaceShips (player:Player) (shipList: List<int>) : Player =
         let startX = rnd.Next(0,10-size)
         let startY = rnd.Next(0,10-size)
         let startPos = Position(startX,startY)
-        let direction = rnd.Next(0,2)
-        let endPos = Position(startX+direction*size,startY+direction*size)
+        let horizontal = (rnd.Next(0,2)=0)
+        let endPos = Position(startX + (if horizontal then size-1 else 0), startY + (if horizontal then 0 else size-1))
         let ship = {StartCell = startPos; EndCell = endPos; Length=size}
         let shipCells = [
             for x in ship.StartCell.X .. ship.EndCell.X do
@@ -77,21 +79,24 @@ let HandleGamePolling (username : string) : WebPart =
             then
                 let game = List.find(fun g-> g.Active.Name=username && not(String.isEmpty( g.WinnerName))) games
                 games <- List.where(fun g-> not( g.Active.Name=username && not(String.isEmpty( g.WinnerName)))) games
-                OK  (Json.toJson(game)|> System.Text.Encoding.UTF8.GetString)
+                OK  (JsonConvert.SerializeObject(game))
         else
-             (OK  (Json.toJson(List.find(fun g -> g.Active.Name=username || g.Passive.Name=username) games)|> System.Text.Encoding.UTF8.GetString))
+             OK  (JsonConvert.SerializeObject(List.find(fun g -> g.Active.Name=username || g.Passive.Name=username) games))
     elif lobbyPlayers.Length >=2
     then 
-        OK (Json.toJson(CreateGame username) |> System.Text.Encoding.UTF8.GetString)
+        OK (JsonConvert.SerializeObject(CreateGame username))
     else
         OK "waiting"
 
 let HandleCellSelection (cellIdx : string)(username : string) ( req : HttpRequest)  : WebPart = 
     let idx = LanguagePrimitives.ParseInt32(cellIdx)
     let shot = Position(idx%10,idx/10)
-    let game =  List.find(fun g -> g.Active.Name=username) games
-    games <-  (GameShot game shot) :: List.where(fun g-> not(g.Active.Name=game.Active.Name)) games
-    HandleGamePolling username
+    if not (List.exists(fun g -> g.Active.Name=username) games)
+        then FORBIDDEN "Not your turn"
+    else
+        let game =  List.find(fun g -> g.Active.Name=username) games
+        games <-  (GameShot game shot) :: List.where(fun g-> not(g.Active.Name=game.Active.Name)) games
+        HandleGamePolling username
 
 let LoginPost = request HandleLogin
     

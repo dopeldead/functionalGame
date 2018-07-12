@@ -13,13 +13,14 @@ let mutable players : List<Player> = []
 let mutable lobbyPlayers : List<Player> = []
 
 let HandleLogin (request : HttpRequest) : WebPart =  
+
      let name = request.rawForm |> System.Text.Encoding.UTF8.GetString
      let player = {Name=name.Replace("=", ""); Ships=[]; Shots=[]}
 
-     if String.IsNullOrEmpty(name)
+     if String.IsNullOrEmpty(player.Name)
         then 
         BAD_REQUEST "Empty username"
-     elif (List.exists(fun p -> p.Name=name) players)
+     elif (List.exists(fun p -> p.Name=player.Name) players)
         then
         CONFLICT "Username already exists"
      else
@@ -92,7 +93,7 @@ let HandleCellSelection (cellIdx : string)(username : string) ( req : HttpReques
     games <-  (GameShot game shot) :: List.where(fun g-> not(g.Active.Name=game.Active.Name)) games
     HandleGamePolling username
 
-let LoginPost = POST >=> request HandleLogin
+let LoginPost = request HandleLogin
     
 let GetGame =
     request (fun r ->
@@ -108,11 +109,29 @@ let GetGame =
             then HandleGamePolling username
         else (HandleCellSelection cellidx username r)
     )
+let setCORSHeaders =
+    Suave.Writers.addHeader  "Access-Control-Allow-Origin" "*" 
+    >=> Suave.Writers.addHeader "Access-Control-Allow-Headers" "content-type" 
+    >=> Suave.Writers.addHeader "Access-Control-Allow-Methods" "GET,POST" 
 
 let routes = 
     choose [
-        path "/Login" >=> LoginPost
-        path "/Game" >=> GetGame     
+        GET >=>
+            fun context ->
+                context |> (
+                    setCORSHeaders
+                    >=> choose
+                        [ 
+                            path "/Game" >=> GetGame  
+                        ] )
+        POST >=>
+            fun context ->
+                context |> (
+                    setCORSHeaders
+                    >=> choose
+                        [
+                            path "/Login" >=> LoginPost
+                        ] )
     ]
 
 

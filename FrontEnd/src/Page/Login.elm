@@ -82,7 +82,7 @@ postRequest model =
     Http.request
         { method = "POST"
         , headers = []
-        , url = ""
+        , url = "http://localhost:8080/Login"
         , body = body
         , expect = Http.expectString
         , timeout = Nothing

@@ -8,6 +8,7 @@ open Suave.Operators
 open Suave.Successful
 open Models
 open Suave
+open System
 
 
 
@@ -35,7 +36,7 @@ let HandleLogin ctx =
 let HandleGamePolling (username : string) : WebPart = 
     if not (List.exists(fun p -> p.Name = username) players)
         then NOT_FOUND username
-    else if (List.exists(fun g -> g.Active.Name=username || g.Passive.Name=username) games)
+    elif (List.exists(fun g -> g.Active.Name=username || g.Passive.Name=username) games)
         then (OK  (Json.toJson(List.find(fun g -> g.Active.Name=username || g.Passive.Name=username) games)|> System.Text.Encoding.UTF8.GetString))
     else
         OK "temp"
@@ -45,9 +46,7 @@ let HandleCellSelection (cellIdx : string)(username : string) ( req : HttpReques
     let idx = LanguagePrimitives.ParseInt32(cellIdx)
     let shot = Position(idx%10,idx/10)
     let game = games.Where(fun g -> g.Active.Name=username).Single()
-
     games <-  (GameShot game shot) :: List.where(fun g-> not(g.Active.Name=game.Active.Name)) games
-                    
     HandleGamePolling username
 
 
@@ -64,7 +63,7 @@ let GetGame =
                         | Choice2Of2 _ -> ""
         if String.isEmpty(username)
             then BAD_REQUEST "Username should be provided"
-        else if String.isEmpty(cellidx)
+        elif String.isEmpty(cellidx)
             then HandleGamePolling username
         else (HandleCellSelection cellidx username r)
     )

@@ -27,12 +27,41 @@ let HandleLogin ctx =
          lobbyPlayers <- lobbyPlayers @ [player]
          OK ""
 
+let rec PlaceShips (player:Player) (shipList: List<int>) : Player =
+    if List.isEmpty(shipList) 
+        then player
+    else        
+        let rnd = System.Random()
+        let size = shipList.Head
+        let startX = rnd.Next(0,10-size)
+        let startY = rnd.Next(0,10-size)
+        let startPos = Position(startX,startY)
+        let direction = rnd.Next(0,2)
+        let endPos = Position(startX+direction*size,startY+direction*size)
+        let ship = {StartCell = startPos; EndCell = endPos; Length=size}
+        let shipCells = [
+            for x in ship.StartCell.X .. ship.EndCell.X do
+                for y in ship.StartCell.Y .. ship.EndCell.Y do 
+                    yield Position(x,y)
+        ]
+        let usedCells = [
+            for s in player.Ships do
+                for x in s.StartCell.X .. s.EndCell.X do
+                    for y in s.StartCell.Y .. s.EndCell.Y do 
+                        yield Position(x,y)
+        ]
+        if not ((List.except(usedCells) shipCells).Length = size)
+            then PlaceShips player shipList
+        else PlaceShips {player with Ships= ship::player.Ships } shipList.Tail
+
 // Creates game from 2 players
 let CreateGame (username : string ) : Game =
-    Console.WriteLine(username)
-    let shipSize = [5,4,3,3,2]
     let firstPlayer = List.find(fun p -> (p.Name = username)) lobbyPlayers
     let otherPlayer = List.find(fun p -> not (p.Name = username)) lobbyPlayers
+    let boatList = [5;4;3;3;2]
+
+    let temp = PlaceShips firstPlayer boatList
+
     let game = {Active= firstPlayer; Passive=otherPlayer; Message="";WinnerName=""}
     lobbyPlayers <- List.where(fun p -> not(p.Name=firstPlayer.Name || p.Name = otherPlayer.Name ) ) lobbyPlayers
     games <- games @ [game]

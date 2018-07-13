@@ -1,4 +1,4 @@
-module Main exposing (..)
+module Login exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -8,56 +8,12 @@ import Json.Encode as Encode
 
 import Utils
 
-type alias Model =
-    { userName : String
-    , response : Maybe String
-    }
-
-
-initialModel : Model
-initialModel =
-    { userName = ""
-    , response = Nothing
-    }
-
-
-type Msg
-    = NoOp
-    | SubmitForm
-    | SetUserName String
-    | Response (Result Http.Error String)
-
-
 type FormField
     = UserName
 
 -- UPDATE
 
-
-update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
-    case Debug.log "msg" msg of
-        NoOp ->
-            ( model, Cmd.none )
-
-        SubmitForm ->
-            ( { model | response = Nothing }
-            , Http.send Response (postRequest model)
-            )
-
-        SetUserName userName ->
-            ( { model | userName = userName }, Cmd.none )
-
-        Response (Ok response) ->
-            ( { model | response = Just response }, Cmd.none )
-
-        Response (Err error) ->
-            ( { model | response = Just (toString error ++ " - See the Console for more details.") }, Cmd.none )
-
-
-
 --HELPERS
-
 
 formUrlencoded : List (String, String) -> String
 formUrlencoded object =
@@ -89,11 +45,15 @@ postRequest model =
         , withCredentials = False
         }
 
+
+
 -- VIEWS
+
 
 view : Model -> Html Msg
 view model =
     Utils.view model viewForm
+
 
 viewForm : Model -> Html Msg
 viewForm model =
@@ -116,7 +76,10 @@ viewForm model =
             [ text "Submit" ]
         ]
 
+
+
 -- MAIN
+
 
 main : Program Never Model Msg
 main =
